@@ -1,12 +1,11 @@
-import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cheapest_app/infrastructure/blocs/order/order_bloc.dart';
+import 'package:cheapest_app/infrastructure/locator.dart';
 import 'package:cheapest_app/infrastructure/models/product_model.dart';
+import 'package:cheapest_app/infrastructure/services/hive_service.dart';
 import 'package:cheapest_app/presentation/shared/snack.dart';
 import 'package:cheapest_app/presentation/widgets/components/custom_button.dart';
 import 'package:cheapest_app/utilities/constants/theme_globals.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProductInfoScreen extends StatefulWidget {
   final Result product;
@@ -18,57 +17,17 @@ class ProductInfoScreen extends StatefulWidget {
 }
 
 class _ProductInfoScreenState extends State<ProductInfoScreen> {
-  final _bloc = OrderBloc();
-
-  @override
-  void dispose() {
-    super.dispose();
-    _bloc.close();
-  }
+  HiveService get _hiveService => locator<HiveService>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildAppBar(),
-      body: BlocProvider(
-        create: (context) => _bloc,
-        child: BlocListener<OrderBloc, OrderState>(
-          listener: (context, state) {
-            if (state is OrderSuccess) {
-              AwesomeDialog(
-                  context: context,
-                  animType: AnimType.LEFTSLIDE,
-                  headerAnimationLoop: false,
-                  dialogType: DialogType.SUCCES,
-                  title: 'Order Succes',
-                  desc: 'Order status: ${state.orderStatus}',
-                  btnOkOnPress: () {
-                    debugPrint('OnClcik');
-                  },
-                  btnOkIcon: Icons.check_circle,
-                  onDissmissCallback: () {
-                    debugPrint('Dialog Dissmiss from callback');
-                  })
-                ..show();
-            }
-            if (state is OrderDisplayMessage) {
-              Snack.display(context: context, message: state.message);
-            }
-          },
-          child: BlocBuilder<OrderBloc, OrderState>(
-            builder: (context, state) {
-              if (state is OrderLoading) {
-                return Center(child: CircularProgressIndicator());
-              }
-              return _buildBody();
-            },
-          ),
-        ),
-      ),
+      body: Builder(builder: (context) => _buildBody(context: context)),
     );
   }
 
-  Widget _buildBody() {
+  Widget _buildBody({BuildContext context}) {
     return SingleChildScrollView(
       physics: BouncingScrollPhysics(),
       child: Column(
@@ -91,21 +50,13 @@ class _ProductInfoScreenState extends State<ProductInfoScreen> {
           ),
           SizedBox(height: 20),
           Padding(
-            padding: const EdgeInsets.only(bottom: 8.0),
+            padding: const EdgeInsets.all(8.0),
             child: Text(
               '${widget.product.name}',
+              textAlign: TextAlign.center,
               style: bodyText1Bold.copyWith(color: Colors.black, fontSize: 20),
             ),
           ),
-          // widget.product.restaurant.length > 0
-          //     ? Padding(
-          //         padding: const EdgeInsets.only(bottom: 8.0),
-          //         child: Text(
-          //           'Restaurant: ${widget.product.restaurant}',
-          //           style: bodyText2.copyWith(color: Colors.grey[600], fontSize: 15),
-          //         ),
-          //       )
-          //     : SizedBox.shrink(),
           widget.product.price != null
               ? Padding(
                   padding: const EdgeInsets.only(bottom: 8.0),
@@ -137,25 +88,10 @@ class _ProductInfoScreenState extends State<ProductInfoScreen> {
             padding: EdgeInsets.symmetric(horizontal: 50),
             child: CustomButton(
               color: primaryColor,
-              title: "Order",
-              onTap: () => _bloc.add(
-                SendOrder(
-                  totalAmount: widget.product.price,
-                  foodType: widget.product.id,
-                  restaurantId: widget.product.restaurant,
-                  count: 1,
-                  amount: widget.product.price,
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 50),
-            child: CustomButton(
-              color: primaryColor,
-              title: "Order",
-              onTap: () {
-
+              title: "Add to cart",
+              onTap: () async {
+                Snack.display(context: context, message: "Added to cart");
+                await _hiveService.persistProduct(widget.product);
               },
             ),
           ),

@@ -1,5 +1,9 @@
 import 'dart:convert';
 
+import 'package:hive/hive.dart';
+
+part 'product_model.g.dart';
+
 ProductModel productModelFromJson(String str) => ProductModel.fromJson(json.decode(str));
 
 String productModelToJson(ProductModel data) => json.encode(data.toJson());
@@ -27,6 +31,7 @@ class ProductModel {
       };
 }
 
+@HiveType(typeId: 0)
 class Result {
   Result({
     this.portion,
@@ -38,17 +43,38 @@ class Result {
     this.restaurant,
     this.created,
     this.v,
+    this.count = 1,
   });
 
+  @HiveField(0)
   int portion;
+
+  @HiveField(1)
   String id;
+
+  @HiveField(2)
   String name;
+
+  @HiveField(3)
   String description;
+
+  @HiveField(4)
   double price;
+
+  @HiveField(5)
   String img;
+
+  @HiveField(6)
   String restaurant;
+
+  @HiveField(7)
   DateTime created;
+
+  @HiveField(8)
   int v;
+
+  @HiveField(9)
+  int count;
 
   Result copyWith({
     int portion,
@@ -60,6 +86,7 @@ class Result {
     String restaurant,
     DateTime created,
     int v,
+    int count,
   }) =>
       Result(
         portion: portion ?? this.portion,
@@ -71,6 +98,7 @@ class Result {
         restaurant: restaurant ?? this.restaurant,
         created: created ?? this.created,
         v: v ?? this.v,
+        count: count ?? this.count,
       );
 
   factory Result.fromJson(Map<String, dynamic> json) => Result(

@@ -1,4 +1,3 @@
-import 'package:cheapest_app/infrastructure/models/product_model.dart';
 import 'package:cheapest_app/utilities/constants/preferences_keys.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

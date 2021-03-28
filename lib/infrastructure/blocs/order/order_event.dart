@@ -7,21 +7,17 @@ abstract class OrderEvent extends Equatable {
   List<Object> get props => [];
 }
 
+class FetchOrders extends OrderEvent {}
+
 class SendOrder extends OrderEvent {
   final double totalAmount;
-  final String foodType;
-  final String restaurantId;
-  final int count;
-  final double amount;
+  final List<OrderProductModel> food;
 
   SendOrder({
     this.totalAmount,
-    this.foodType,
-    this.restaurantId,
-    this.count,
-    this.amount,
+    this.food,
   });
 
   @override
-  List<Object> get props => [totalAmount, foodType, count];
+  List<Object> get props => [totalAmount, food];
 }

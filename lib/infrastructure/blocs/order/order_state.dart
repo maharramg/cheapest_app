@@ -11,6 +11,8 @@ class OrderInitial extends OrderState {}
 
 class OrderLoading extends OrderState {}
 
+class OrderRefresh extends OrderState {}
+
 class OrderSuccess extends OrderState {
   final String orderStatus;
   final String orderId;

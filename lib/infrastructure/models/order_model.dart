@@ -1,7 +1,3 @@
-// To parse this JSON data, do
-//
-//     final orderModel = orderModelFromJson(jsonString);
-
 import 'dart:convert';
 
 OrderModel orderModelFromJson(String str) => OrderModel.fromJson(json.decode(str));
@@ -78,7 +74,7 @@ class Order {
   factory Order.fromJson(Map<String, dynamic> json) => Order(
         status: json["status"] == null ? null : json["status"],
         id: json["_id"] == null ? null : json["_id"],
-        totalAmount: json["total_amount"] == null ? null : json["total_amount"].toDouble(),
+        totalAmount: json["total_amount"] == null ? null : json["total_amount"],
         food: json["_food"] == null ? null : List<Food>.from(json["_food"].map((x) => Food.fromJson(x))),
         user: json["_user"] == null ? null : json["_user"],
         created: json["created"] == null ? null : DateTime.parse(json["created"]),
@@ -100,45 +96,57 @@ class Food {
   Food({
     this.id,
     this.foodType,
+    this.foodName,
     this.restaurantId,
     this.count,
     this.amount,
+    this.restaurantName,
   });
 
   String id;
   String foodType;
+  String foodName;
   String restaurantId;
   int count;
-  double amount;
+  int amount;
+  String restaurantName;
 
   Food copyWith({
     String id,
     String foodType,
+    String foodName,
     String restaurantId,
     int count,
-    double amount,
+    int amount,
+    String restaurantName,
   }) =>
       Food(
         id: id ?? this.id,
         foodType: foodType ?? this.foodType,
+        foodName: foodName ?? this.foodName,
         restaurantId: restaurantId ?? this.restaurantId,
         count: count ?? this.count,
         amount: amount ?? this.amount,
+        restaurantName: restaurantName ?? this.restaurantName,
       );
 
   factory Food.fromJson(Map<String, dynamic> json) => Food(
         id: json["_id"] == null ? null : json["_id"],
         foodType: json["foodType"] == null ? null : json["foodType"],
+        foodName: json["foodName"] == null ? null : json["foodName"],
         restaurantId: json["restaurantId"] == null ? null : json["restaurantId"],
         count: json["count"] == null ? null : json["count"],
-        amount: json["amount"] == null ? null : json["amount"].toDouble(),
+        amount: json["amount"] == null ? null : json["amount"],
+        restaurantName: json["restaurantName"] == null ? null : json["restaurantName"],
       );
 
   Map<String, dynamic> toJson() => {
         "_id": id == null ? null : id,
         "foodType": foodType == null ? null : foodType,
+        "foodName": foodName == null ? null : foodName,
         "restaurantId": restaurantId == null ? null : restaurantId,
         "count": count == null ? null : count,
         "amount": amount == null ? null : amount,
+        "restaurantName": restaurantName == null ? null : restaurantName,
       };
 }

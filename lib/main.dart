@@ -11,7 +11,6 @@ import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   await setupLocator();
 
   Bloc.observer = SimpleBlocObserver();

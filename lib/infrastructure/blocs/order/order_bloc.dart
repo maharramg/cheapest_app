@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:cheapest_app/infrastructure/data/order_provider.dart';
+import 'package:cheapest_app/infrastructure/models/order_product_model.dart';
 import 'package:equatable/equatable.dart';
 
 part 'order_event.dart';
@@ -22,10 +23,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     yield OrderLoading();
     final result = await OrderProvider.order(
       totalAmount: event.totalAmount,
-      foodType: event.foodType,
-      restaurantId: event.restaurantId,
-      count: event.count,
-      amount: event.amount,
+      food: event.food,
     );
     yield OrderSuccess(orderStatus: result.order.status, orderId: result.order.id);
     // } catch (e) {

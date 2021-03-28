@@ -1,9 +1,12 @@
+import 'package:cheapest_app/infrastructure/blocs/order/order_bloc.dart';
 import 'package:cheapest_app/infrastructure/global_view_model.dart';
 import 'package:cheapest_app/presentation/pages/account_screen.dart';
+import 'package:cheapest_app/presentation/pages/cart_screen.dart';
 import 'package:cheapest_app/presentation/pages/products_screen.dart';
 import 'package:cheapest_app/presentation/pages/restaurants_screen.dart';
 import 'package:cheapest_app/utilities/constants/theme_globals.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 
 class RootScreen extends StatefulWidget {
@@ -14,6 +17,7 @@ class RootScreen extends StatefulWidget {
 class _RootScreenState extends State<RootScreen> {
   var _scaffoldKey;
   int _currentIndex = 0;
+  OrderBloc _orderBloc;
 
   List<Widget> screens = [
     ProductsScreen(),
@@ -24,7 +28,14 @@ class _RootScreenState extends State<RootScreen> {
   @override
   void initState() {
     super.initState();
+    _orderBloc = context.read<OrderBloc>();
     _scaffoldKey = Provider.of<GlobalViewModel>(context, listen: false).generateScaffoldKey();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _orderBloc.close();
   }
 
   @override
@@ -40,7 +51,10 @@ class _RootScreenState extends State<RootScreen> {
         currentIndex: _currentIndex,
         type: BottomNavigationBarType.fixed,
         selectedItemColor: primaryColor,
-        onTap: (index) => setState(() => _currentIndex = index),
+        onTap: (index) {
+          if (index == 2) BlocProvider.of<OrderBloc>(context).add(FetchOrders());
+          setState(() => _currentIndex = index);
+        },
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.shopping_basket),
@@ -80,6 +94,16 @@ class _RootScreenState extends State<RootScreen> {
       centerTitle: true,
       automaticallyImplyLeading: false,
       backgroundColor: primaryColor,
+      actions: [
+        IconButton(
+          icon: Icon(Icons.shopping_cart),
+          onPressed: () => Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => CartScreen(),
+            ),
+          ),
+        )
+      ],
     );
   }
 }

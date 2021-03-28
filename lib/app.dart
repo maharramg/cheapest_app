@@ -1,5 +1,6 @@
 import 'package:animations/animations.dart';
 import 'package:cheapest_app/infrastructure/blocs/authentication/authentication_bloc.dart';
+import 'package:cheapest_app/infrastructure/blocs/order/order_bloc.dart';
 import 'package:cheapest_app/infrastructure/global_view_model.dart';
 import 'package:cheapest_app/presentation/pages/login_screen.dart';
 import 'package:cheapest_app/presentation/pages/root_screen.dart';
@@ -20,6 +21,14 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
+  final _orderBloc = OrderBloc();
+
+  @override
+  void dispose() {
+    super.dispose();
+    _orderBloc.close();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -27,6 +36,7 @@ class _AppState extends State<App> {
         ListenableProvider<GlobalViewModel>(
           create: (_) => GlobalViewModel(isLoggedIn: widget.isLoggedIn),
         ),
+        BlocProvider.value(value: _orderBloc),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
